@@ -8,4 +8,13 @@ class GameState:
     def __init__(self, parent, move):
         self.parent = parent
         self.move = move
-        
+
+
+def __get__children(parent):
+    
+
+
+
+
+
+
