@@ -1,3 +1,5 @@
+import math
+
 # Answer tracker
 goalState = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 depth = 0
@@ -67,3 +69,21 @@ def __move__left(state):
     temp = state.copy()
     temp[index], temp[index - 1] = temp[index - 1], temp[index]
     return temp
+
+
+# Heuristic function
+def __heuristic__(state):
+    manhattan_distance = 0
+    euclid_distance = 0
+    for i in state:
+        curr_row = int(state[i] / 3)
+        curr_column = state[i] % 3
+        proj_row = int(i / 3)
+        proj_column = i % 3
+        x = abs(curr_row - proj_row) + abs(curr_column - proj_column)
+        manhattan_distance += x
+        y = math.sqrt(((curr_row - proj_row) ** 2) + (curr_column - proj_column) ** 2)
+        euclid_distance += y
+    return manhattan_distance, euclid_distance
+
+
