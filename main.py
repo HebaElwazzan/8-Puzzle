@@ -1,10 +1,10 @@
 import math
 
 # Answer tracker
-goalState = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+goalState = 12345678
 maxDepth = 0
 nodesVisited = 0
-nodesExpanded = 0
+nodesExpanded = 1
 
 
 # Game state class
@@ -19,67 +19,77 @@ class GameState:
         return self.state == another.state
 
     def __str__(self):
-        return " ".join(map(str, self.state))
+        return str(self.state)
 
     def __hash__(self):
         return hash(self.__str__())
 
 
 def __get__children(parent):
-    index = parent.state.index(0)
+    stateStr = str(parent.state)
+    stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)
+    index = stateStr.index("0")
     row = int(index / 3)
     column = index % 3
     children = []
     if row == 0:
         # Move down
-        children.append(GameState(parent, 'Down', __move__down(parent.state), parent.depth + 1))
+        children.append(GameState(parent, 'Down', __move__down(stateStr), parent.depth + 1))
     elif row == 1:
         # Move up and down
-        children.append(GameState(parent, 'Down', __move__down(parent.state), parent.depth + 1))
-        children.append(GameState(parent, 'Up', __move__up(parent.state), parent.depth + 1))
+        children.append(GameState(parent, 'Down', __move__down(stateStr), parent.depth + 1))
+        children.append(GameState(parent, 'Up', __move__up(stateStr), parent.depth + 1))
     else:
         # Move up
-        children.append(GameState(parent, 'Up', __move__up(parent.state), parent.depth + 1))
+        children.append(GameState(parent, 'Up', __move__up(stateStr), parent.depth + 1))
 
     if column == 0:
         # Move right
-        children.append(GameState(parent, 'Right', __move__right(parent.state), parent.depth + 1))
+        children.append(GameState(parent, 'Right', __move__right(stateStr), parent.depth + 1))
     elif column == 1:
         # Move left and right
-        children.append(GameState(parent, 'left', __move__left(parent.state), parent.depth + 1))
-        children.append(GameState(parent, 'right', __move__right(parent.state), parent.depth + 1))
+        children.append(GameState(parent, 'left', __move__left(stateStr), parent.depth + 1))
+        children.append(GameState(parent, 'right', __move__right(stateStr), parent.depth + 1))
     else:
         # Move left
-        children.append(GameState(parent, 'Left', __move__left(parent.state), parent.depth + 1))
+        children.append(GameState(parent, 'Left', __move__left(stateStr), parent.depth + 1))
     return children
 
 
 def __move__down(state):
-    index = state.index(0)
-    temp = state.copy()
-    temp[index], temp[index + 3] = temp[index + 3], temp[index]
-    return temp
+    index = state.index('0')
+    temp = state
+    x = list(temp)
+    x[index], x[index + 3] = x[index + 3], x[index]
+    temp = "".join(x)
+    return int(temp)
 
 
 def __move__up(state):
-    index = state.index(0)
-    temp = state.copy()
-    temp[index], temp[index - 3] = temp[index - 3], temp[index]
-    return temp
+    index = state.index('0')
+    temp = state
+    x = list(temp)
+    x[index], x[index - 3] = x[index - 3], x[index]
+    temp = "".join(x)
+    return int(temp)
 
 
 def __move__right(state):
-    index = state.index(0)
-    temp = state.copy()
-    temp[index], temp[index + 1] = temp[index + 1], temp[index]
-    return temp
+    index = state.index('0')
+    temp = state
+    x = list(temp)
+    x[index], x[index + 1] = x[index + 1], x[index]
+    temp = "".join(x)
+    return int(temp)
 
 
 def __move__left(state):
-    index = state.index(0)
-    temp = state.copy()
-    temp[index], temp[index - 1] = temp[index - 1], temp[index]
-    return temp
+    index = state.index('0')
+    temp = state
+    x = list(temp)
+    x[index], x[index - 1] = x[index - 1], x[index]
+    temp = "".join(x)
+    return int(temp)
 
 
 # Heuristic function
@@ -100,6 +110,7 @@ def __heuristic__(state):
 
 # dfs
 def __dfs__(root):
+    global nodesExpanded
     explored = set()
     frontier = [root]
     while frontier:
@@ -109,6 +120,14 @@ def __dfs__(root):
             return node
         children = reversed(__get__children(node))
         for child in children:
-            if child not in explored and child not in frontier:
+            if child not in explored:
                 frontier.append(child)
+                explored.add(child)
+                nodesExpanded += 1
     return
+
+
+answer = __dfs__(GameState(0, "Up", 123456078, 0))
+print(answer.depth)
+print(nodesExpanded)
+
