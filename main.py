@@ -1,4 +1,6 @@
 import math
+import time
+from queue import Queue
 
 # Answer tracker
 goalState = 12345678
@@ -6,6 +8,7 @@ maxDepth = 0
 nodesVisited = 0
 nodesExpanded = 1
 isFound = False
+runTime = 0
 
 
 # Game state class
@@ -32,8 +35,8 @@ def __get__children(parent):
     :return :Array of all parent's children
     """
     stateStr = str(parent.state)  # Convert Parent state from integer to string
-    stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)  # if 0 is first element it will add it to
-    # th string
+    # if 0 is first element it will add it to the string
+    stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)
     index = stateStr.index("0")  # get the index of the zero (Blank Space)
     row = int(index / 3)  # get  the row in which the blank space lies
     column = index % 3  # get  the column in which the blank space lies
@@ -76,7 +79,7 @@ def __move__up(state):
     temp = state
     x = list(temp)  # Converting String to list for easier swap
     x[index], x[index - 3] = x[index - 3], x[index]
-    temp = "".join(x)   # Converting the list back to string
+    temp = "".join(x)  # Converting the list back to string
     return int(temp)
 
 
@@ -85,7 +88,7 @@ def __move__right(state):
     temp = state
     x = list(temp)  # Converting String to list for easier swap
     x[index], x[index + 1] = x[index + 1], x[index]
-    temp = "".join(x)   # Converting the list back to string
+    temp = "".join(x)  # Converting the list back to string
     return int(temp)
 
 
@@ -94,7 +97,7 @@ def __move__left(state):
     temp = state
     x = list(temp)  # Converting String to list for easier swap
     x[index], x[index - 1] = x[index - 1], x[index]
-    temp = "".join(x)   # Converting the list back to string
+    temp = "".join(x)  # Converting the list back to string
     return int(temp)
 
 
@@ -116,7 +119,8 @@ def __heuristic__(state):
 
 # dfs
 def __dfs__(root):
-    global nodesExpanded, nodesVisited, maxDepth, isFound
+    start_time = time.time()
+    global nodesExpanded, nodesVisited, maxDepth, runTime
     explored = set()
     frontier = [root]
     while frontier:
@@ -124,6 +128,8 @@ def __dfs__(root):
         explored.add(node)
         if node.state == goalState:
             isFound = True
+            end_time = time.time()
+            runTime = end_time - start_time
             return node
         children = __get__children(node)
         children.reverse()
@@ -134,10 +140,82 @@ def __dfs__(root):
                 nodesExpanded += 1
                 maxDepth = maxDepth if maxDepth > child.depth else child.depth
     isFound = False
+    end_time = time.time()
+    runTime = end_time - start_time
     return
 
 
-answer = __dfs__(GameState(0, "Up", 312045678, 0))
-print(nodesExpanded)
-print(maxDepth)
-print(answer.depth)
+# Breadth first search
+def __bfs__(root):
+    # start the timer
+    start_time = time.time()
+    # create a set for the explored and a queue containing the frontier states
+    global nodesExpanded, nodesVisited, maxDepth, isFound, runTime
+    explored = set()
+    frontier = Queue()
+    frontier.put(root)
+    # iterate over frontier until goal is found or the tree is exhausted
+    while not frontier.empty():
+        node = frontier.get()
+        explored.add(node)  # start exploring current state
+        if node.state == goalState:
+            isFound = True
+            end_time = time.time()
+            runTime = end_time - start_time
+            return node  # if goal is found, exit and return state
+        # else, start expanding by getting its children and enqueuing them
+        children = __get__children(node)
+        for child in children:
+            if child not in explored:
+                frontier.put(child)
+                maxDepth = maxDepth if maxDepth > child.depth else child.depth
+        nodesExpanded += 1
+    isFound = False
+    end_time = time.time()
+    runTime = end_time - start_time
+    return
+
+
+def display_results(game_state):
+    answer = __bfs__(game_state)
+    print_data(answer, "Breadth-first search")
+
+    print()
+
+    answer = __dfs__(game_state)
+    print_data(answer, "Depth-first search")
+
+
+def print_data(answer, type_of_search):
+    if answer is not None:  # condition for unreachable goal state
+        print(type_of_search + ":")
+        print(f"Path to goal: {get_path_to_goal(answer)}")
+        print(f"Cost of path: {answer.depth}")
+        print(f"Nodes expanded: {nodesExpanded}")
+        print(f"Search depth: {maxDepth}")
+        print(f"Running time: {runTime}")
+    else:
+        print("No solution exists!")
+        exit()
+
+
+# recursive function to extract path from game state and its parents
+def get_path_to_goal(game_state):
+    path = []
+    path = _get_path(game_state, path)
+    path.reverse()
+    return path
+
+
+def _get_path(game_state, path):
+    try:
+        if game_state.move is not None:
+            path.append(game_state.move)
+            _get_path(game_state.parent, path)
+    except RecursionError:
+        print("Path is too large to display fully!")
+
+    return path
+
+
+display_results(GameState(None, None, 312456078, 0))
