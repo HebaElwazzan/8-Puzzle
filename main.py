@@ -1,6 +1,7 @@
 import math
 import time
 from queue import Queue
+import sys
 
 # Answer tracker
 goalState = 12345678
@@ -120,9 +121,10 @@ def __heuristic__(state):
 # dfs
 def __dfs__(root):
     start_time = time.time()
-    global nodesExpanded, nodesVisited, maxDepth, runTime
+    global nodesExpanded, nodesVisited, maxDepth, runTime ,isFound
     explored = set()
     frontier = [root]
+    stack = set()
     while frontier:
         node = frontier.pop()
         explored.add(node)
@@ -134,9 +136,9 @@ def __dfs__(root):
         children = __get__children(node)
         children.reverse()
         for child in children:
-            if child not in explored:
+            if child not in explored and child not in stack:
                 frontier.append(child)
-                explored.add(child)
+                stack.add(child)
                 nodesExpanded += 1
                 maxDepth = maxDepth if maxDepth > child.depth else child.depth
     isFound = False
@@ -168,8 +170,9 @@ def __bfs__(root):
         for child in children:
             if child not in explored:
                 frontier.put(child)
+                # explored.add(child)
                 maxDepth = maxDepth if maxDepth > child.depth else child.depth
-        nodesExpanded += 1
+                nodesExpanded += 1
     isFound = False
     end_time = time.time()
     runTime = end_time - start_time
@@ -177,13 +180,12 @@ def __bfs__(root):
 
 
 def display_results(game_state):
+    answer = __dfs__(game_state)
+    print_data(answer, "Depth-first search")
     answer = __bfs__(game_state)
     print_data(answer, "Breadth-first search")
 
     print()
-
-    answer = __dfs__(game_state)
-    print_data(answer, "Depth-first search")
 
 
 def print_data(answer, type_of_search):
@@ -196,7 +198,9 @@ def print_data(answer, type_of_search):
         print(f"Running time: {runTime}")
     else:
         print("No solution exists!")
-        exit()
+        print(f"Running time: {runTime}")
+        print(f"Nodes expanded: {nodesExpanded}")
+        sys.exit()
 
 
 # recursive function to extract path from game state and its parents
@@ -218,4 +222,4 @@ def _get_path(game_state, path):
     return path
 
 
-display_results(GameState(None, None, 312456078, 0))
+display_results(GameState(None, None, 321456078, 0))
