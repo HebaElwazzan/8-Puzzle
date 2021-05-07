@@ -6,7 +6,6 @@ import sys
 # Answer tracker
 goalState = 12345678
 maxDepth = 0
-nodesVisited = 0
 nodesExpanded = 1
 isFound = False
 runTime = 0
@@ -24,7 +23,10 @@ class GameState:
         return self.state == another.state
 
     def __str__(self):
-        return str(self.state)
+        stateStr = str(self.state)  # Convert Parent state from integer to string
+        # if 0 is first element it will add it to the string
+        stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)
+        return stateStr
 
     def __hash__(self):
         return hash(self.__str__())
@@ -35,9 +37,7 @@ def __get__children(parent):
     :param parent : Parent's node
     :return :Array of all parent's children
     """
-    stateStr = str(parent.state)  # Convert Parent state from integer to string
-    # if 0 is first element it will add it to the string
-    stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)
+    stateStr = parent.__str__()
     index = stateStr.index("0")  # get the index of the zero (Blank Space)
     row = int(index / 3)  # get  the row in which the blank space lies
     column = index % 3  # get  the column in which the blank space lies
@@ -121,7 +121,7 @@ def __heuristic__(state):
 # dfs
 def __dfs__(root):
     start_time = time.time()
-    global nodesExpanded, nodesVisited, maxDepth, runTime ,isFound
+    global nodesExpanded, maxDepth, runTime, isFound
     explored = set()
     frontier = [root]
     stack = set()
@@ -136,7 +136,7 @@ def __dfs__(root):
         children = __get__children(node)
         children.reverse()
         for child in children:
-            if child not in explored and child not in stack:
+            if (child not in explored) and (child not in stack):
                 frontier.append(child)
                 stack.add(child)
                 nodesExpanded += 1
@@ -152,7 +152,7 @@ def __bfs__(root):
     # start the timer
     start_time = time.time()
     # create a set for the explored and a queue containing the frontier states
-    global nodesExpanded, nodesVisited, maxDepth, isFound, runTime
+    global nodesExpanded, maxDepth, isFound, runTime
     explored = set()
     frontier = Queue()
     frontier.put(root)
@@ -180,22 +180,34 @@ def __bfs__(root):
 
 
 def display_results(game_state):
+    global nodesExpanded, maxDepth
     answer = __dfs__(game_state)
     print_data(answer, "Depth-first search")
+    nodesVisited = 0
+    nodesExpanded = 1
+    maxDepth = 0
     answer = __bfs__(game_state)
     print_data(answer, "Breadth-first search")
 
     print()
 
 
+
 def print_data(answer, type_of_search):
     if answer is not None:  # condition for unreachable goal state
         print(type_of_search + ":")
-        print(f"Path to goal: {get_path_to_goal(answer)}")
+        # print(f"Path to goal: {get_path_to_goal(answer)}")
         print(f"Cost of path: {answer.depth}")
         print(f"Nodes expanded: {nodesExpanded}")
         print(f"Search depth: {maxDepth}")
         print(f"Running time: {runTime}")
+
+        path_to_goal = _iterative_get_path_(answer)
+        for game_state in path_to_goal:
+            if game_state:
+                if game_state.move:
+                    print(game_state.move)
+                print(game_state)
     else:
         print("No solution exists!")
         print(f"Running time: {runTime}")
@@ -204,6 +216,7 @@ def print_data(answer, type_of_search):
 
 
 # recursive function to extract path from game state and its parents
+# becomes obsolete if path is too large so we will use an iterative approach instead
 def get_path_to_goal(game_state):
     path = []
     path = _get_path(game_state, path)
@@ -222,4 +235,15 @@ def _get_path(game_state, path):
     return path
 
 
-display_results(GameState(None, None, 321456078, 0))
+# saves iteratively the path into a list in order to display path in correct (non reversed) order
+def _iterative_get_path_(game_state):
+    path = [game_state]
+    i = 0
+    while path[i]:
+        path.append(path[i].parent)
+        i += 1
+    path.reverse()
+    return path
+
+
+display_results(GameState(None, None, 312064578, 0))
