@@ -5,6 +5,7 @@ goalState = 12345678
 maxDepth = 0
 nodesVisited = 0
 nodesExpanded = 1
+isFound = False
 
 
 # Game state class
@@ -26,69 +27,74 @@ class GameState:
 
 
 def __get__children(parent):
-    stateStr = str(parent.state)
-    stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)
-    index = stateStr.index("0")
-    row = int(index / 3)
-    column = index % 3
+    """
+    :param parent : Parent's node
+    :return :Array of all parent's children
+    """
+    stateStr = str(parent.state)  # Convert Parent state from integer to string
+    stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)  # if 0 is first element it will add it to
+    # th string
+    index = stateStr.index("0")  # get the index of the zero (Blank Space)
+    row = int(index / 3)  # get  the row in which the blank space lies
+    column = index % 3  # get  the column in which the blank space lies
     children = []
     if row == 0:
-        # Move down
+        # Move down only as first row elements can't go up the board
         children.append(GameState(parent, 'Down', __move__down(stateStr), parent.depth + 1))
     elif row == 1:
         # Move up and down
         children.append(GameState(parent, 'Down', __move__down(stateStr), parent.depth + 1))
         children.append(GameState(parent, 'Up', __move__up(stateStr), parent.depth + 1))
     else:
-        # Move up
+        # Move up only as first row elements can't down up the board
         children.append(GameState(parent, 'Up', __move__up(stateStr), parent.depth + 1))
 
     if column == 0:
-        # Move right
+        # Move right as as the element is at the far left
         children.append(GameState(parent, 'Right', __move__right(stateStr), parent.depth + 1))
     elif column == 1:
         # Move left and right
-        children.append(GameState(parent, 'left', __move__left(stateStr), parent.depth + 1))
-        children.append(GameState(parent, 'right', __move__right(stateStr), parent.depth + 1))
+        children.append(GameState(parent, 'Left', __move__left(stateStr), parent.depth + 1))
+        children.append(GameState(parent, 'Right', __move__right(stateStr), parent.depth + 1))
     else:
-        # Move left
+        # Move left as the element is at the far right
         children.append(GameState(parent, 'Left', __move__left(stateStr), parent.depth + 1))
     return children
 
 
 def __move__down(state):
-    index = state.index('0')
+    index = state.index('0')  # get the index of the zero (Blank Space)
     temp = state
-    x = list(temp)
+    x = list(temp)  # Converting String to list for easier swap
     x[index], x[index + 3] = x[index + 3], x[index]
-    temp = "".join(x)
+    temp = "".join(x)  # Converting the list back to string
     return int(temp)
 
 
 def __move__up(state):
-    index = state.index('0')
+    index = state.index('0')  # get the index of the zero (Blank Space)
     temp = state
-    x = list(temp)
+    x = list(temp)  # Converting String to list for easier swap
     x[index], x[index - 3] = x[index - 3], x[index]
-    temp = "".join(x)
+    temp = "".join(x)   # Converting the list back to string
     return int(temp)
 
 
 def __move__right(state):
-    index = state.index('0')
+    index = state.index('0')  # get the index of the zero (Blank Space)
     temp = state
-    x = list(temp)
+    x = list(temp)  # Converting String to list for easier swap
     x[index], x[index + 1] = x[index + 1], x[index]
-    temp = "".join(x)
+    temp = "".join(x)   # Converting the list back to string
     return int(temp)
 
 
 def __move__left(state):
-    index = state.index('0')
+    index = state.index('0')  # get the index of the zero (Blank Space)
     temp = state
-    x = list(temp)
+    x = list(temp)  # Converting String to list for easier swap
     x[index], x[index - 1] = x[index - 1], x[index]
-    temp = "".join(x)
+    temp = "".join(x)   # Converting the list back to string
     return int(temp)
 
 
@@ -110,24 +116,28 @@ def __heuristic__(state):
 
 # dfs
 def __dfs__(root):
-    global nodesExpanded
+    global nodesExpanded, nodesVisited, maxDepth, isFound
     explored = set()
     frontier = [root]
     while frontier:
         node = frontier.pop()
         explored.add(node)
         if node.state == goalState:
+            isFound = True
             return node
-        children = reversed(__get__children(node))
+        children = __get__children(node)
+        children.reverse()
         for child in children:
             if child not in explored:
                 frontier.append(child)
                 explored.add(child)
                 nodesExpanded += 1
+                maxDepth = maxDepth if maxDepth > child.depth else child.depth
+    isFound = False
     return
 
 
-answer = __dfs__(GameState(0, "Up", 123456078, 0))
-print(answer.depth)
+answer = __dfs__(GameState(0, "Up", 312045678, 0))
 print(nodesExpanded)
-
+print(maxDepth)
+print(answer.depth)
