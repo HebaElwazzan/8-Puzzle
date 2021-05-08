@@ -1,6 +1,7 @@
 import math
 import time
 from queue import Queue
+import random
 
 # Answer tracker
 goalState = 12345678
@@ -30,6 +31,13 @@ class GameState:
     def __hash__(self):
         return hash(self.__str__())
 
+# This functions creates a random game state by shuffling a list of 9 numbers: 0-8
+# and returns an integer representing the state
+def __random_game_state():
+    str_var = list("123456780")
+    random.shuffle(str_var)
+    state = int(''.join(str_var))
+    return state
 
 def __get__children(parent):
     """
