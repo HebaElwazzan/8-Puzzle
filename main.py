@@ -31,14 +31,6 @@ class GameState:
     def __hash__(self):
         return hash(self.__str__())
 
-# This functions creates a random game state by shuffling a list of 9 numbers: 0-8
-# and returns an integer representing the state
-def __random_game_state():
-    str_var = list("123456780")
-    random.shuffle(str_var)
-    state = int(''.join(str_var))
-    return state
-
 def __get__children(parent):
     """
     :param parent : Parent's node
@@ -247,3 +239,11 @@ def _iterative_get_path_(game_state):
     path.reverse()
     return path
 
+
+# This functions creates a random game state by shuffling a list of 9 numbers: 0-8
+# and returns an integer representing the state
+def random_game_state():
+    str_var = list("123456780")
+    random.shuffle(str_var)
+    state = int(''.join(str_var))
+    return state
