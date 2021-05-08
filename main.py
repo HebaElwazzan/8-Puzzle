@@ -123,7 +123,8 @@ def __dfs__(root):
     global nodesExpanded, maxDepth, runTime, isFound
     explored = set()
     frontier = [root]
-    stack = set()
+    expanded = set()
+    expanded.add(root)
     while frontier:
         node = frontier.pop()
         explored.add(node)
@@ -135,9 +136,9 @@ def __dfs__(root):
         children = __get__children(node)
         children.reverse()
         for child in children:
-            if (child not in explored) and (child not in stack):
+            if (child not in explored) and (child not in expanded):
                 frontier.append(child)
-                stack.add(child)
+                expanded.add(child)
                 nodesExpanded += 1
                 maxDepth = maxDepth if maxDepth > child.depth else child.depth
     isFound = False
