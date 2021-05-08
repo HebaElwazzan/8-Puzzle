@@ -233,10 +233,9 @@ def _get_path(game_state, path):
 def _iterative_get_path_(game_state):
     path = [game_state]
     i = 0
-    while path[i]:
-        path.append(path[i].parent)
+    while path[0]:
+        path.insert(0, path[0].parent)
         i += 1
-    path.reverse()
     return path
 
 
