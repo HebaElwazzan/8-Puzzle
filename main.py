@@ -239,5 +239,3 @@ def _iterative_get_path_(game_state):
     path.reverse()
     return path
 
-
-display_results(GameState(None, None, 432650781, 0))
