@@ -33,6 +33,7 @@ APPLICATION_TITLE = "8-Puzzle"
 # this is just something to be don
 pygame.init()
 
+# creating the fonts that will be used throughout the application
 BASICFONT = pygame.font.Font('fonts/consola.ttf', BASICFONTSIZE)
 BUTTON_FONT = pygame.font.Font('fonts/consola.ttf', BASICFONTSIZE // 2)
 
@@ -47,6 +48,7 @@ manager = pygame_gui.UIManager((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption(APPLICATION_TITLE)
 
 
+# a simple class that contains Tile information
 class Tile:
 
     def __init__(self, number, tile_width, tile_height, index_x, index_y):
@@ -63,6 +65,8 @@ class Tile:
         return self.x, self.y, self.width, self.height
 
 
+# a rect object to store the information for Rects used to create buttons
+# with pygame_gui
 class ButtonRect:
 
     def __init__(self, id,):
@@ -71,7 +75,7 @@ class ButtonRect:
             (BUTTON_WIDTH, BUTTON_HEIGHT))
         self.id = id
 
-
+# Initializes the board with a new random state.
 def newRandomState():
     # some random test state
     # state = m.GameState(None, None, m.random_game_state(), 0)
@@ -88,10 +92,12 @@ def newRandomState():
     # num is a string
     for i, num in enumerate(stateStr):
 
+        # I think I made a mistake, but this configuration works
         index_x = (i // 3)
         index_y = (i % 3)
 
-        # The tile containing zero should be left as blank!
+        # We need a reference to the blank tile at all times for purpose of swapping
+        # and drawing a blank rectangle
         if num != '0':
             # Margins are left around tiles to give the appearance of
             tile = Tile(num, TILE_WIDTH - 2, TILE_HEIGHT - 2, index_x, index_y)
@@ -118,12 +124,16 @@ def newRandomState():
 
     return state, initial_tiles_list, blankTileLocal
 
-# 2- swap blank tile and target tile
+
+# swap blank tile and target tile
 # direction the direction to which the blank tile moves
 def updateBoard(direction):
 
+    # saving the indices of blankTile for ease of use in calculating
+    # index of tile in the tile list
     i, j = blankTile.index_x, blankTile.index_y
 
+    # the tile required in list is different depending on swap direction
     if direction == 'Left':
         list_index = i*3 + (j - 1)
     elif direction == 'Up':
@@ -136,15 +146,24 @@ def updateBoard(direction):
     target_tile = numbered_tiles_list[list_index]
     blankTile_list_index = i * 3 + j
 
+    # swapping location on board and index. Need to know where the blank tile is
+    # at all times
     target_tile.x, blankTile.x = blankTile.x, target_tile.x
     target_tile.y, blankTile.y = blankTile.y, target_tile.y
     target_tile.index_x, blankTile.index_x = blankTile.index_x, target_tile.index_x
     target_tile.index_y, blankTile.index_y = blankTile.index_y, target_tile.index_y
 
+    # swap the blank tile and target tile in the tile list. Not doing so will mess
+    # with later swaps as indices are no longer accurate
     numbered_tiles_list[list_index], numbered_tiles_list[blankTile_list_index] \
         = numbered_tiles_list[blankTile_list_index], numbered_tiles_list[list_index]
 
 
+# This function checks the validity of a swap request, then calls updateBoard to do
+# the actual swapping.
+# To check if a swap is valid, the index of the clicked tile is first calculated,
+# If the 'Distance' in terms of horizontal or vertical movement is exactly 1,
+# this means it's a valid swap
 def swapTiles(mousePosition):
     x, y = mousePosition
     index_y = x // TILE_WIDTH
@@ -165,20 +184,17 @@ def swapTiles(mousePosition):
             updateBoard("Up")
 
 
+# clicking this button generates a random board state.
 randomStateButtonRect = ButtonRect(0)
 randomStateButton = pygame_gui.elements.UIButton(
     relative_rect=randomStateButtonRect.Rect, text="Random Start", manager=manager
 )
 
+# Clicking this button should go through the steps required to solve the puzzle
 solveButtonRect = ButtonRect(1)
 solveButton = pygame_gui.elements.UIButton(
     relative_rect=solveButtonRect.Rect, text="Solve", manager=manager
 )
-
-# swapButtonRect = ButtonRect(2)
-# swapButton = pygame_gui.elements.UIButton(
-#     relative_rect=swapButtonRect.Rect, text="Swap", manager=manager
-# )
 
 initialState, numbered_tiles_list, blankTile = newRandomState()
 
@@ -204,9 +220,10 @@ while running:
     # the OS considers the app frozen and it crashes
     events = pygame.event.get()
 
-    # Check if game quit
+    # Check all events in even queue
     for event in events:
 
+        # specific to the UI library. all events related to pygame_gui go here
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == randomStateButton:
@@ -214,8 +231,11 @@ while running:
                 elif event.ui_element == solveButton:
                     m.display_results(initialState)
 
+        # Checking for a mouseclick on a tile
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
+            # Check If the position of mouse click is whithin border of Tile Area
+            # No need to do any swapping otherwise
             if x < TILE_AREA_WIDTH and y < TILE_AREA_HEIGHT:
                 swapTiles(event.pos)
 
@@ -225,8 +245,10 @@ while running:
 
         manager.process_events(event)
 
+    # specific to pygame_gui, must be called every loop to update UI
     manager.update(time_delta)
 
+    # fill the screen with the background color before drawing anything else
     window.fill(BACKGROUND_COLOR)
 
     # Draw rectangles representing the tiles of the 8-puzzle except blank
