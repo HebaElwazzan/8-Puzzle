@@ -31,6 +31,7 @@ class GameState:
     def __hash__(self):
         return hash(self.__str__())
 
+
 def __get__children(parent):
     """
     :param parent : Parent's node
@@ -121,6 +122,10 @@ def __heuristic__(state):
 def __dfs__(root):
     start_time = time.time()
     global nodesExpanded, maxDepth, runTime, isFound
+    maxDepth = 0
+    nodesExpanded = 1
+    isFound = False
+    runTime = 0
     explored = set()
     frontier = [root]
     expanded = set()
@@ -153,9 +158,15 @@ def __bfs__(root):
     start_time = time.time()
     # create a set for the explored and a queue containing the frontier states
     global nodesExpanded, maxDepth, isFound, runTime
+    maxDepth = 0
+    nodesExpanded = 1
+    isFound = False
+    runTime = 0
     explored = set()
     frontier = Queue()
     frontier.put(root)
+    expanded = set()
+    expanded.add(root)
     # iterate over frontier until goal is found or the tree is exhausted
     while not frontier.empty():
         node = frontier.get()
@@ -168,10 +179,11 @@ def __bfs__(root):
         # else, start expanding by getting its children and enqueuing them
         children = __get__children(node)
         for child in children:
-            if child not in explored:
+            if (child not in explored) and (child not in expanded):
                 frontier.put(child)
+                expanded.add(child)
+                nodesExpanded += 1
                 maxDepth = maxDepth if maxDepth > child.depth else child.depth
-        nodesExpanded += 1
     isFound = False
     end_time = time.time()
     runTime = end_time - start_time
