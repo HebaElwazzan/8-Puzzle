@@ -1,7 +1,6 @@
 import math
 import time
 from queue import Queue
-import sys
 
 # Answer tracker
 goalState = 12345678
@@ -170,9 +169,8 @@ def __bfs__(root):
         for child in children:
             if child not in explored:
                 frontier.put(child)
-                # explored.add(child)
                 maxDepth = maxDepth if maxDepth > child.depth else child.depth
-                nodesExpanded += 1
+        nodesExpanded += 1
     isFound = False
     end_time = time.time()
     runTime = end_time - start_time
@@ -180,22 +178,18 @@ def __bfs__(root):
 
 
 def display_results(game_state):
-    global nodesExpanded, maxDepth
-    answer = __dfs__(game_state)
-    print_data(answer, "Depth-first search")
-    nodesVisited = 0
-    nodesExpanded = 1
-    maxDepth = 0
     answer = __bfs__(game_state)
     print_data(answer, "Breadth-first search")
 
     print()
 
+    answer = __dfs__(game_state)
+    print_data(answer, "Depth-first search")
 
 
 def print_data(answer, type_of_search):
+    print(type_of_search + ":")
     if answer is not None:  # condition for unreachable goal state
-        print(type_of_search + ":")
         # print(f"Path to goal: {get_path_to_goal(answer)}")
         print(f"Cost of path: {answer.depth}")
         print(f"Nodes expanded: {nodesExpanded}")
@@ -212,7 +206,6 @@ def print_data(answer, type_of_search):
         print("No solution exists!")
         print(f"Running time: {runTime}")
         print(f"Nodes expanded: {nodesExpanded}")
-        sys.exit()
 
 
 # recursive function to extract path from game state and its parents
@@ -246,4 +239,4 @@ def _iterative_get_path_(game_state):
     return path
 
 
-display_results(GameState(None, None, 312064578, 0))
+display_results(GameState(None, None, 432650781, 0))
