@@ -205,8 +205,8 @@ solveChoice = pygame_gui.elements.UIDropDownMenu(
 inputTextFieldRect = pygame.Rect(
     (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN + 1, 0 * BUTTON_HEIGHT + 10),
     (BUTTON_WIDTH, BUTTON_HEIGHT / 2))
-inputTextField = pygame_gui.elements.UITextBox(
-    "Enter Initial State", relative_rect=inputTextFieldRect, manager=manager)
+inputTextField = pygame_gui.elements.UITextEntryLine(
+    relative_rect=inputTextFieldRect, manager=manager)
 
 confirmButtonRect = pygame.Rect(
     (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN + 1, 0.5 * BUTTON_HEIGHT + 10),
