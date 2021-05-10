@@ -185,23 +185,34 @@ def swapTiles(mousePosition):
 
 
 # clicking this button generates a random board state.
-randomStateButtonRect = ButtonRect(0)
+randomStateButtonRect = ButtonRect(1)
 randomStateButton = pygame_gui.elements.UIButton(
     relative_rect=randomStateButtonRect.Rect, text="Random Start", manager=manager
 )
 
 # Clicking this button should go through the steps required to solve the puzzle
-solveButtonRect = ButtonRect(2)
+solveButtonRect = ButtonRect(3)
 solveButton = pygame_gui.elements.UIButton(
     relative_rect=solveButtonRect.Rect, text="Solve", manager=manager
 )
 
-
 # Option box to select which searching algorithm to visualize
-solveChoiceRect = ButtonRect(1)
+solveChoiceRect = ButtonRect(2)
 solveChoice = pygame_gui.elements.UIDropDownMenu(
     ["BFS", "DFS", "A* Manhattan", "A* Euclid"], "BFS",
     relative_rect=solveChoiceRect.Rect, manager=manager)
+
+inputTextFieldRect = pygame.Rect(
+    (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN + 1, 0 * BUTTON_HEIGHT + 10),
+    (BUTTON_WIDTH, BUTTON_HEIGHT / 2))
+inputTextField = pygame_gui.elements.UITextBox(
+    "Enter Initial State", relative_rect=inputTextFieldRect, manager=manager)
+
+confirmButtonRect = pygame.Rect(
+    (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN + 1, 0.5 * BUTTON_HEIGHT + 10),
+    (BUTTON_WIDTH, BUTTON_HEIGHT / 2))
+confirmButton = pygame_gui.elements.UIButton(
+     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
 initialState, numbered_tiles_list, blankTile = newRandomState()
 
