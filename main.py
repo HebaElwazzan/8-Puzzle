@@ -259,3 +259,5 @@ def random_game_state():
     random.shuffle(str_var)
     state = int(''.join(str_var))
     return state
+
+

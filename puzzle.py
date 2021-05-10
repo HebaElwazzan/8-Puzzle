@@ -76,12 +76,22 @@ class ButtonRect:
         self.id = id
 
 
+# Validate input state from the user
+def validate(state):
+    if state.__len__() != 9 or not state.__contains__("0") or not state.__contains__("1") or not state.__contains__(
+            "2") or not state.__contains__("3") or not state.__contains__("4") or not state.__contains__(
+            "5") or not state.__contains__("6") or not state.__contains__("7") or not state.__contains__("8"):
+        # TODO : print label to show wrong input
+        return
+    return state
+
+
 # Initializes the board with a new random state.
-def newRandomState():
+def newRandomState(state):
     # some random test state
     # state = m.GameState(None, None, m.random_game_state(), 0)
-    state = m.GameState(None, None, 312045678, 0)
-    stateStr = str(state)
+    gameState = m.GameState(None, None, state, 0)
+    stateStr = str(gameState)
 
     # for now for the purpose of initialization, this list will contain some tiles to draw
     initial_tiles_list = []
@@ -123,7 +133,7 @@ def newRandomState():
             blankTileLocal.index_y = index_y
             initial_tiles_list.append(blankTileLocal)
 
-    return state, initial_tiles_list, blankTileLocal
+    return gameState, initial_tiles_list, blankTileLocal
 
 
 # swap blank tile and target tile
@@ -207,14 +217,16 @@ inputTextFieldRect = pygame.Rect(
     (BUTTON_WIDTH, BUTTON_HEIGHT / 2))
 inputTextField = pygame_gui.elements.UITextEntryLine(
     relative_rect=inputTextFieldRect, manager=manager)
+inputTextField.set_allowed_characters(["0", "1", "2", "3", "4", "5", "6", "7", "8"])
+inputTextField.set_text_length_limit(9)
 
 confirmButtonRect = pygame.Rect(
-    (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN + 1, 0.5 * BUTTON_HEIGHT + 10),
+    (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN + 1, 0.4 * BUTTON_HEIGHT + 10),
     (BUTTON_WIDTH, BUTTON_HEIGHT / 2))
 confirmButton = pygame_gui.elements.UIButton(
-     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
+    relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
-initialState, numbered_tiles_list, blankTile = newRandomState()
+initialState, numbered_tiles_list, blankTile = newRandomState(12345678)
 
 # m.display_results(m.GameState(None, None, 102345678, 0))
 # m.display_results(initialState)
@@ -245,9 +257,14 @@ while running:
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == randomStateButton:
-                    initialState, numbered_tiles_list, blankTile = newRandomState()
+                    state = m.random_game_state()
+                    initialState, numbered_tiles_list, blankTile = newRandomState(state)
                 elif event.ui_element == solveButton:
                     m.display_results(initialState)
+                elif event.ui_element == confirmButton:
+                    state = validate(inputTextField.text)
+                    if state:
+                        initialState, numbered_tiles_list, blankTile = newRandomState(state)
 
         # Checking for a mouseclick on a tile
         if event.type == pygame.MOUSEBUTTONDOWN:
