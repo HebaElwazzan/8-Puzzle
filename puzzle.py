@@ -17,11 +17,11 @@ BUTTON_HEIGHT = 80
 BUTTON_MARGIN = (BUTTON_AREA_WIDTH - BUTTON_WIDTH) // 2
 
 # colors
-GREEN =         (  0, 204,   0)
-BLUE =          (  0,   0, 204)
-WHITE =         (255, 255, 255)
-BLACK =         (  0,   0,   0)
-DARKTURQUOISE = (  3,  54,  73)
+GREEN = (0, 204, 0)
+BLUE = (0, 0, 204)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+DARKTURQUOISE = (3, 54, 73)
 
 BACKGROUND_COLOR = DARKTURQUOISE
 
@@ -69,17 +69,18 @@ class Tile:
 # with pygame_gui
 class ButtonRect:
 
-    def __init__(self, id,):
+    def __init__(self, id, ):
         self.Rect = pygame.Rect(
-            (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN, id*BUTTON_HEIGHT + 10),     # left, top
+            (WINDOW_WIDTH - BUTTON_AREA_WIDTH + BUTTON_MARGIN, id * BUTTON_HEIGHT + 10),  # left, top
             (BUTTON_WIDTH, BUTTON_HEIGHT))
         self.id = id
+
 
 # Initializes the board with a new random state.
 def newRandomState():
     # some random test state
     # state = m.GameState(None, None, m.random_game_state(), 0)
-    state = m.GameState(None, None, 123456870, 0)
+    state = m.GameState(None, None, 312045678, 0)
     stateStr = str(state)
 
     # for now for the purpose of initialization, this list will contain some tiles to draw
@@ -128,14 +129,13 @@ def newRandomState():
 # swap blank tile and target tile
 # direction the direction to which the blank tile moves
 def updateBoard(direction):
-
     # saving the indices of blankTile for ease of use in calculating
     # index of tile in the tile list
     i, j = blankTile.index_x, blankTile.index_y
 
     # the tile required in list is different depending on swap direction
     if direction == 'Left':
-        list_index = i*3 + (j - 1)
+        list_index = i * 3 + (j - 1)
     elif direction == 'Up':
         list_index = (i - 1) * 3 + j
     elif direction == 'Down':
@@ -174,9 +174,9 @@ def swapTiles(mousePosition):
 
     # there is a valid swap move
     if distance == 1:
-        if blankTile.index_y < index_y: # blank tile will move right
+        if blankTile.index_y < index_y:  # blank tile will move right
             updateBoard("Right")
-        elif blankTile.index_y > index_y: # blank tile will move left
+        elif blankTile.index_y > index_y:  # blank tile will move left
             updateBoard("Left")
         elif blankTile.index_x < index_x:
             updateBoard("Down")
@@ -191,10 +191,17 @@ randomStateButton = pygame_gui.elements.UIButton(
 )
 
 # Clicking this button should go through the steps required to solve the puzzle
-solveButtonRect = ButtonRect(1)
+solveButtonRect = ButtonRect(2)
 solveButton = pygame_gui.elements.UIButton(
     relative_rect=solveButtonRect.Rect, text="Solve", manager=manager
 )
+
+
+# Option box to select which searching algorithm to visualize
+solveChoiceRect = ButtonRect(1)
+solveChoice = pygame_gui.elements.UIDropDownMenu(
+    ["BFS", "DFS", "A* Manhattan", "A* Euclid"], "BFS",
+    relative_rect=solveChoiceRect.Rect, manager=manager)
 
 initialState, numbered_tiles_list, blankTile = newRandomState()
 
@@ -234,7 +241,7 @@ while running:
         # Checking for a mouseclick on a tile
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-            # Check If the position of mouse click is whithin border of Tile Area
+            # Check If the position of mouse click is within border of Tile Area
             # No need to do any swapping otherwise
             if x < TILE_AREA_WIDTH and y < TILE_AREA_HEIGHT:
                 swapTiles(event.pos)
