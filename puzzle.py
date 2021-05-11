@@ -314,12 +314,11 @@ while running:
                         # inputTextField.text = "No solution!"
 
                     typeofsearch = solveChoice.selected_option
-                    m.display_results(initialState, typeofsearch)
+                    status = m.display_results(initialState, typeofsearch)
 
-                    # todo: alter print data so that it sends a string to display instead
 
                     LabelFont = BUTTON_FONT
-                    label = LabelFont.render("STATUS", True, GREEN)
+                    label = LabelFont.render(status, True, GREEN)
                     label.get_rect(center=(300, 300))
                     window.blit(label, (10, 610))
                     pygame.display.update()

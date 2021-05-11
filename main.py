@@ -212,7 +212,8 @@ def display_results(initialstate, typeofsearch):
         answer = __aStar__(initialstate, "manhattan")
     elif typeofsearch == "A* Euclid":
         answer = __aStar__(initialstate, "euclid")
-    print_data(answer, typeofsearch)
+    status = print_data(answer, typeofsearch)
+    return status
 
 
 
@@ -225,6 +226,8 @@ def print_data(answer, type_of_search):
         print(f"Search depth: {maxDepth}")
         print(f"Running time: {runTime}")
 
+        status = "Cost of path: " + str(answer.depth) + "\nNodes expanded: " + str(nodesExpanded) + "\nSearch depth: " + str(maxDepth) + "\nRunning time: " + str(runTime)
+
         path_to_goal = _iterative_get_path_(answer)
         for game_state in path_to_goal:
             if game_state:
@@ -235,6 +238,10 @@ def print_data(answer, type_of_search):
         print("No solution exists!")
         print(f"Running time: {runTime}")
         print(f"Nodes expanded: {nodesExpanded}")
+
+        status = "No solution exists!\nRunning time: " + str(runTime) + "\nNodes expanded: " + str(nodesExpanded)
+
+        return status
 
 
 # recursive function to extract path from game state and its parents
