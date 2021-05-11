@@ -202,14 +202,18 @@ def __bfs__(root):
     return
 
 
-def display_results(game_state):
-    answer = __bfs__(game_state)
-    print_data(answer, "Breadth-first search")
+def display_results(initialstate, typeofsearch):
+    answer = None
+    if typeofsearch == "BFS":
+        answer = __bfs__(initialstate)
+    elif typeofsearch == "DFS":
+        answer = __dfs__(initialstate)
+    elif typeofsearch == "A* Manhattan":
+        answer = __aStar__(initialstate, "manhattan")
+    elif typeofsearch == "A* Euclid":
+        answer = __aStar__(initialstate, "euclid")
+    print_data(answer, typeofsearch)
 
-    print()
-
-    answer = __dfs__(game_state)
-    print_data(answer, "Depth-first search")
 
 
 def print_data(answer, type_of_search):
