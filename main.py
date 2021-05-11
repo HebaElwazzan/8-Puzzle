@@ -261,7 +261,7 @@ def _get_path(game_state, path):
 def _iterative_get_path_(game_state):
     path = [game_state]
     i = 0
-    while path[i]:
+    while path[i].parent:
         path.append(path[i].parent)
         i += 1
     path.reverse()
@@ -317,4 +317,18 @@ def __aStar__(root, type="manhattan"):
     end_time = time.time()
     runTime = end_time - start_time
     return
+
+
+def solve(gameState, algorithm):
+
+    answer = []
+    if algorithm == 'BFS':
+        answer = __bfs__(gameState)
+
+    path_to_goal = _iterative_get_path_(answer)
+
+    if isFound:
+        return path_to_goal
+    else:
+        return False
 
