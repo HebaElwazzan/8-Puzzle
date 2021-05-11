@@ -1,6 +1,7 @@
+import heapq
 import math
 import time
-from queue import Queue
+from queue import Queue, PriorityQueue
 import random
 
 # Answer tracker
@@ -13,11 +14,12 @@ runTime = 0
 
 # Game state class
 class GameState:
-    def __init__(self, parent, move, state, depth):
+    def __init__(self, parent, move, state, depth, cost=0):
         self.parent = parent
         self.move = move
         self.state = state
         self.depth = depth
+        self.cost = cost + self.depth
 
     def __eq__(self, another):
         return self.state == another.state
@@ -30,6 +32,9 @@ class GameState:
 
     def __hash__(self):
         return hash(self.__str__())
+
+    def __lt__(self, other):
+        return self.cost < other.cost
 
 
 def __get__children(parent):
@@ -102,14 +107,18 @@ def __move__left(state):
     return int(temp)
 
 
-# Heuristic function
+# Heuristic function that calculate the manhattan distance and euclidean distance
+# for a given state
 def __heuristic__(state):
     manhattan_distance = 0
     euclid_distance = 0
-    for i in state:
-        curr_row = int(state[i] / 3)
-        curr_column = state[i] % 3
-        proj_row = int(i / 3)
+    stateStr = str(state)
+    stateStr = stateStr if len(stateStr) > 8 else "0" + "".join(stateStr)
+    res = [int(x) for x in stateStr]
+    for i in res:
+        curr_row = res[i] // 3
+        curr_column = res[i] % 3
+        proj_row = i // 3
         proj_column = i % 3
         x = abs(curr_row - proj_row) + abs(curr_column - proj_column)
         manhattan_distance += x
@@ -118,14 +127,20 @@ def __heuristic__(state):
     return manhattan_distance, euclid_distance
 
 
-# dfs
-def __dfs__(root):
-    start_time = time.time()
+# Reset all global variables
+def __reset__():
     global nodesExpanded, maxDepth, runTime, isFound
     maxDepth = 0
     nodesExpanded = 1
     isFound = False
     runTime = 0
+
+
+# dfs
+def __dfs__(root):
+    start_time = time.time()
+    global nodesExpanded, maxDepth, runTime, isFound
+    __reset__()
     explored = set()
     frontier = [root]
     expanded = set()
@@ -141,7 +156,7 @@ def __dfs__(root):
         children = __get__children(node)
         children.reverse()
         for child in children:
-            if (child not in explored) and (child not in expanded):
+            if child not in expanded:
                 frontier.append(child)
                 expanded.add(child)
                 nodesExpanded += 1
@@ -158,10 +173,7 @@ def __bfs__(root):
     start_time = time.time()
     # create a set for the explored and a queue containing the frontier states
     global nodesExpanded, maxDepth, isFound, runTime
-    maxDepth = 0
-    nodesExpanded = 1
-    isFound = False
-    runTime = 0
+    __reset__()
     explored = set()
     frontier = Queue()
     frontier.put(root)
@@ -179,7 +191,7 @@ def __bfs__(root):
         # else, start expanding by getting its children and enqueuing them
         children = __get__children(node)
         for child in children:
-            if (child not in explored) and (child not in expanded):
+            if child not in expanded:
                 frontier.put(child)
                 expanded.add(child)
                 nodesExpanded += 1
@@ -260,4 +272,45 @@ def random_game_state():
     state = int(''.join(str_var))
     return state
 
+
+# A star algorithm
+def __aStar__(root, type="manhattan"):
+    start_time = time.time()
+    global nodesExpanded, maxDepth, isFound, runTime
+    __reset__()
+    explored = set()
+    frontier = PriorityQueue()
+    frontier.put(root)
+    expanded = dict()  # Frontier union Explored
+    h, e = __heuristic__(root.state)
+    cost = h if type == "manhattan" else e
+    root.cost = cost
+    expanded[root.state] = cost
+    while frontier and explored.__len__() != 181440:
+        node = frontier.get()
+        explored.add(node)
+        if node.state == goalState:
+            isFound = True
+            end_time = time.time()
+            runTime = end_time - start_time
+            return node
+        children = __get__children(node)
+        for child in children:
+            h, e = __heuristic__(child.state)
+            cost = h if type == "manhattan" else e
+            child.cost = cost + child.depth
+            if child.state not in expanded:
+                frontier.put(child)
+                expanded[child.state] = child.cost
+                nodesExpanded += 1
+                maxDepth = maxDepth if maxDepth > child.depth else child.depth
+
+            if ((child not in explored) and (child.state in expanded)) and expanded.get(
+                    child.state) > child.cost:   # child is in frontier and has a cost more than current child
+                frontier.put(child)
+                expanded[child.state] = child.cost
+    isFound = False
+    end_time = time.time()
+    runTime = end_time - start_time
+    return
 
