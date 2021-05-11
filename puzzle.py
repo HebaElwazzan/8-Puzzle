@@ -286,20 +286,24 @@ while running:
                 if event.ui_element == randomStateButton:
                     state = m.random_game_state()
                     initialState, numbered_tiles_list, blankTile = newRandomState(state)
+                    solutionExists = False
                 elif event.ui_element == solveButton:
-                    path_to_goal = m.solve(initialState, 'BFS')
+                    # inputTextField.text = ""
+                    path_to_goal = m.solve(initialState, solveChoice.selected_option)
                     if path_to_goal:
                         solutionExists = True
                         solutionIndex = 0
                         solutionStepsList = path_to_goal[1:]
+                    else:
+                        pass
+                        # inputTextField.text = "No solution!"
 
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)
                     if state:
                         initialState, numbered_tiles_list, blankTile = newRandomState(state)
-                        inputTextField.text = ""
                     else:
-                        inputTextField.text = "Invalid Input"
+                        pass
 
         # Checking for a mouseclick on a tile
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -307,7 +311,8 @@ while running:
             # Check If the position of mouse click is within border of Tile Area
             # No need to do any swapping otherwise
             if x < TILE_AREA_WIDTH and y < TILE_AREA_HEIGHT:
-                swapTiles(event.pos)
+                pass
+                # swapTiles(event.pos)
 
         if event.type == pygame.QUIT:
             running = False
