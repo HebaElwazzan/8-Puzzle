@@ -75,24 +75,27 @@ class ButtonRect:
             (BUTTON_WIDTH, BUTTON_HEIGHT))
         self.id = id
 
-
-
-
+def font():
+    #set font for later on use for declaring a window
+    Select_Font = pygame.font.SysFont('arial', 70)
+    return Select_Font
 # Validate input state from the user
 def validate(state):
     if state.__len__() != 9 or not state.__contains__("0") or not state.__contains__("1") or not state.__contains__(
             "2") or not state.__contains__("3") or not state.__contains__("4") or not state.__contains__(
             "5") or not state.__contains__("6") or not state.__contains__("7") or not state.__contains__("8"):
         # TODO : print label to show wrong input
-        LabelFont = BUTTON_FONT
-        # label=tkinter.Label()
-        # label=LabFont.
-        # label = LabelFont.render("Closing in ...", 1, Colour_Countdown)  # print ("Closing in ...")
-        label = LabelFont.render("Invalid input", True, GREEN)
+        LabelFont = font()
+        #label=tkinter.Label()
+        #label=LabFont.
+        #label = LabelFont.render("Closing in ...", 1, Colour_Countdown)  # print ("Closing in ...")
+        label = LabelFont.render("wrong input", True, (0, 254, 0))
         label.get_rect(center=(300, 300))
-        window.blit(label, (640, 350))
+        window.blit(label, (600, 310))
         pygame.display.update()
         pygame.time.wait(1000)
+
+
         return
     return state
 
@@ -237,7 +240,6 @@ confirmButtonRect = pygame.Rect(
 confirmButton = pygame_gui.elements.UIButton(
     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
-
 initialState, numbered_tiles_list, blankTile = newRandomState(12345678)
 
 # m.display_results(m.GameState(None, None, 102345678, 0))
@@ -272,14 +274,11 @@ while running:
                     state = m.random_game_state()
                     initialState, numbered_tiles_list, blankTile = newRandomState(state)
                 elif event.ui_element == solveButton:
-                    typeofsearch = solveChoice.selected_option
-                    m.display_results(initialState, typeofsearch)
+                    m.display_results(initialState)
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)
                     if state:
                         initialState, numbered_tiles_list, blankTile = newRandomState(state)
-                    else:
-                        inputTextField.text = "Invalid Input"
 
         # Checking for a mouseclick on a tile
         if event.type == pygame.MOUSEBUTTONDOWN:
