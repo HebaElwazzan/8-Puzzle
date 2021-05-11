@@ -1,5 +1,6 @@
 import pygame
 import pygame_gui
+import os
 
 # local imports
 import main as m
@@ -85,12 +86,9 @@ def validate(state):
             "5") or not state.__contains__("6") or not state.__contains__("7") or not state.__contains__("8"):
         # TODO : print label to show wrong input
         LabelFont = BUTTON_FONT
-        # label=tkinter.Label()
-        # label=LabFont.
-        # label = LabelFont.render("Closing in ...", 1, Colour_Countdown)  # print ("Closing in ...")
         label = LabelFont.render("Invalid input", True, GREEN)
         label.get_rect(center=(300, 300))
-        window.blit(label, (640, 350))
+        window.blit(label, (640, 500))
         pygame.display.update()
         pygame.time.wait(1000)
         return
@@ -244,12 +242,12 @@ confirmButtonRect = pygame.Rect(
 confirmButton = pygame_gui.elements.UIButton(
     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
-# statusTextFieldRect = pygame.Rect(
-#     (BUTTON_MARGIN, WINDOW_HEIGHT - 100),
-#     (BUTTON_WIDTH * 3.5, BUTTON_HEIGHT * 20))
-# statusTextField = pygame_gui.elements.UITextEntryLine(
-#     relative_rect=statusTextFieldRect, manager=manager)
-# statusTextField.disable()
+statusTextFieldRect = pygame.Rect(
+    (BUTTON_MARGIN, WINDOW_HEIGHT - 100),
+    (BUTTON_WIDTH * 3.5, BUTTON_HEIGHT * 20))
+statusTextField = pygame_gui.elements.UITextEntryLine(
+    relative_rect=statusTextFieldRect, manager=manager)
+statusTextField.disable()
 
 
 initialState, numbered_tiles_list, blankTile = newState(12345678)
@@ -303,7 +301,6 @@ while running:
                     initialState, numbered_tiles_list, blankTile = newState(state)
                     solutionExists = False
                 elif event.ui_element == solveButton:
-                    # inputTextField.text = ""
                     type_of_search = solveChoice.selected_option
                     answer = m.solve(initialState, type_of_search)
                     path_to_goal = m.iterative_get_path_(answer)
@@ -314,18 +311,8 @@ while running:
                         solutionStepsList = path_to_goal[1:]
                     else:
                         pass
-                        # inputTextField.text = "No solution!"
 
-                    # typeofsearch = solveChoice.selected_option
-                    # status = m.display_results(initialState, typeofsearch)
-                    #
-                    #
-                    # # LabelFont = BUTTON_FONT
-                    # # label = LabelFont.render(status, True, GREEN)
-                    # # label.get_rect(center=(300, 300))
-                    # # window.blit(label, (10, 610))
-                    # # pygame.display.update()
-                    # # pygame.time.wait(1000)
+                    statusTextField.text = status.replace(os.linesep, '\n')
 
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)
