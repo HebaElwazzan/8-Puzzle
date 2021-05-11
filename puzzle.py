@@ -288,6 +288,12 @@ while running:
         if solutionIndex == len(solutionStepsList):
             solutionExists = False
 
+            # I added this to stop it from crashing when trying to solve
+            # a shadow state: state on board an state actually stored are
+            # not the same, so it attempts to do wrong moves
+            initialState, numbered_tiles_list, blankTile = newState(12345678)
+            solutionStepsList = []
+
     # check the event queue for events, such as quit or click
     # I noticed while learning pygame that if the program doesn't process the event queue,
     # the OS considers the app frozen and it crashes
@@ -304,19 +310,23 @@ while running:
                     initialState, numbered_tiles_list, blankTile = newState(state)
                     solutionExists = False
                 elif event.ui_element == solveButton:
-                    type_of_search = solveChoice.selected_option
-                    answer = m.solve(initialState, type_of_search)
-                    path_to_goal = m.iterative_get_path_(answer)
-                    status = m.print_data(answer, type_of_search)
-                    if path_to_goal:
-                        solutionExists = True
-                        solutionIndex = 0
-                        solutionStepsList = path_to_goal[1:]
-                        alert_label("Solving...")
+                    if initialState.state != m.goalState:
+                        type_of_search = solveChoice.selected_option
+                        answer = m.solve(initialState, type_of_search)
+                        path_to_goal = m.iterative_get_path_(answer)
+                        status = m.print_data(answer, type_of_search)
+                        if path_to_goal:
+                            solutionExists = True
+                            solutionIndex = 0
+                            solutionStepsList = path_to_goal[1:]
+                            alert_label("Solving...")
+                        else:
+                            alert_label("No solution!")
+
+                        # print status in text field
+                        statusTextField.text = status
                     else:
-                        alert_label("No solution!")
-                    # print status in text field
-                    statusTextField.text = status
+                        alert_label("Already solved")
 
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)
