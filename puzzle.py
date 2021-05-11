@@ -6,7 +6,7 @@ import main as m
 
 # width and height are not final and are subject to change as UI changes
 WINDOW_WIDTH = 900
-WINDOW_HEIGHT = 600
+WINDOW_HEIGHT = 750
 TILE_AREA_WIDTH = 600
 TILE_AREA_HEIGHT = 600
 TILE_WIDTH = TILE_AREA_WIDTH / 3
@@ -244,7 +244,15 @@ confirmButtonRect = pygame.Rect(
 confirmButton = pygame_gui.elements.UIButton(
     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
-initialState, numbered_tiles_list, blankTile = newState(308127654)
+# statusTextFieldRect = pygame.Rect(
+#     (BUTTON_MARGIN, WINDOW_HEIGHT - 100),
+#     (BUTTON_WIDTH * 3.5, BUTTON_HEIGHT * 20))
+# statusTextField = pygame_gui.elements.UITextEntryLine(
+#     relative_rect=statusTextFieldRect, manager=manager)
+# statusTextField.disable()
+
+
+initialState, numbered_tiles_list, blankTile = newState(12345678)
 
 # m.display_results(m.GameState(None, None, 102345678, 0))
 # m.display_results(initialState)
@@ -304,6 +312,18 @@ while running:
                     else:
                         pass
                         # inputTextField.text = "No solution!"
+
+                    typeofsearch = solveChoice.selected_option
+                    m.display_results(initialState, typeofsearch)
+
+                    # todo: alter print data so that it sends a string to display instead
+
+                    LabelFont = BUTTON_FONT
+                    label = LabelFont.render("STATUS", True, GREEN)
+                    label.get_rect(center=(300, 300))
+                    window.blit(label, (10, 610))
+                    pygame.display.update()
+                    pygame.time.wait(1000)
 
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)
