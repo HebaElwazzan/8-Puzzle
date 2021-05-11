@@ -98,7 +98,7 @@ def validate(state):
 
 
 # Initializes the board with a new random state.
-def newRandomState(state):
+def newState(state):
     # some random test state
     # state = m.GameState(None, None, m.random_game_state(), 0)
     gameState = m.GameState(None, None, state, 0)
@@ -244,7 +244,7 @@ confirmButtonRect = pygame.Rect(
 confirmButton = pygame_gui.elements.UIButton(
     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
-initialState, numbered_tiles_list, blankTile = newRandomState(308127654)
+initialState, numbered_tiles_list, blankTile = newState(308127654)
 
 # m.display_results(m.GameState(None, None, 102345678, 0))
 # m.display_results(initialState)
@@ -292,7 +292,7 @@ while running:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == randomStateButton:
                     state = m.random_game_state()
-                    initialState, numbered_tiles_list, blankTile = newRandomState(state)
+                    initialState, numbered_tiles_list, blankTile = newState(state)
                     solutionExists = False
                 elif event.ui_element == solveButton:
                     # inputTextField.text = ""
@@ -308,7 +308,7 @@ while running:
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)
                     if state:
-                        initialState, numbered_tiles_list, blankTile = newRandomState(state)
+                        initialState, numbered_tiles_list, blankTile = newState(state)
                         solutionExists = False
                     else:
                         pass
