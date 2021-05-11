@@ -1,6 +1,5 @@
 import pygame
 import pygame_gui
-import os
 
 # local imports
 import main as m
@@ -16,6 +15,11 @@ BUTTON_AREA_WIDTH = WINDOW_WIDTH - TILE_AREA_WIDTH
 BUTTON_WIDTH = 240
 BUTTON_HEIGHT = 80
 BUTTON_MARGIN = (BUTTON_AREA_WIDTH - BUTTON_WIDTH) // 2
+CENTER_X = 300
+CENTER_Y = 300
+LABEL_WIDTH = 640
+LABEL_HEIGHT = 500
+WAIT_TIME = 1000
 
 # colors
 GREEN = (0, 204, 0)
@@ -77,6 +81,13 @@ class ButtonRect:
         self.id = id
 
 
+def alert_label(message):
+    label_font = BUTTON_FONT
+    label = label_font.render(message, True, GREEN)
+    label.get_rect(center=(CENTER_X, CENTER_Y))
+    window.blit(label, (LABEL_WIDTH, LABEL_HEIGHT))
+    pygame.display.update()
+    pygame.time.wait(WAIT_TIME)
 
 
 # Validate input state from the user
@@ -84,13 +95,7 @@ def validate(state):
     if state.__len__() != 9 or not state.__contains__("0") or not state.__contains__("1") or not state.__contains__(
             "2") or not state.__contains__("3") or not state.__contains__("4") or not state.__contains__(
             "5") or not state.__contains__("6") or not state.__contains__("7") or not state.__contains__("8"):
-        # TODO : print label to show wrong input
-        LabelFont = BUTTON_FONT
-        label = LabelFont.render("Invalid input", True, GREEN)
-        label.get_rect(center=(300, 300))
-        window.blit(label, (640, 500))
-        pygame.display.update()
-        pygame.time.wait(1000)
+        alert_label("Invalid Input")
         return
     return state
 
@@ -151,6 +156,7 @@ def updateBoard(direction):
     # saving the indices of blankTile for ease of use in calculating
     # index of tile in the tile list
     i, j = blankTile.index_x, blankTile.index_y
+    list_index = 0
 
     # the tile required in list is different depending on swap direction
     if direction == 'Left':
@@ -218,7 +224,7 @@ solveButton = pygame_gui.elements.UIButton(
 # slider to control speed of animation
 speedSliderRect = ButtonRect(4)
 speedSlider = pygame_gui.elements.UIHorizontalSlider(
-    relative_rect=speedSliderRect.Rect, start_value=1, value_range=(1,100),
+    relative_rect=speedSliderRect.Rect, start_value=1, value_range=(1, 100),
     manager=manager
 )
 
@@ -242,6 +248,7 @@ confirmButtonRect = pygame.Rect(
 confirmButton = pygame_gui.elements.UIButton(
     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
+# A disabled text input space which when clicked displays status for current iteration
 statusTextFieldRect = pygame.Rect(
     (BUTTON_MARGIN, WINDOW_HEIGHT - 100),
     (BUTTON_WIDTH * 3.5, BUTTON_HEIGHT * 20))
@@ -249,11 +256,7 @@ statusTextField = pygame_gui.elements.UITextEntryLine(
     relative_rect=statusTextFieldRect, manager=manager)
 statusTextField.disable()
 
-
 initialState, numbered_tiles_list, blankTile = newState(12345678)
-
-# m.display_results(m.GameState(None, None, 102345678, 0))
-# m.display_results(initialState)
 
 # becomes true when 'solve' button is pressed and a solution returns
 solutionExists = False
@@ -309,10 +312,11 @@ while running:
                         solutionExists = True
                         solutionIndex = 0
                         solutionStepsList = path_to_goal[1:]
+                        alert_label("Solving...")
                     else:
-                        pass
-
-                    statusTextField.text = status.replace(os.linesep, '\n')
+                        alert_label("No solution!")
+                    # print status in text field
+                    statusTextField.text = status
 
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)

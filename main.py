@@ -205,7 +205,6 @@ def __bfs__(root):
 def print_data(answer, type_of_search):
     print(type_of_search + ":")
     if answer is not None:  # condition for unreachable goal state
-        # print(f"Path to goal: {get_path_to_goal(answer)}")
         print(f"Cost of path: {answer.depth}")
         print(f"Nodes expanded: {nodesExpanded}")
         print(f"Search depth: {maxDepth}")
@@ -232,22 +231,22 @@ def print_data(answer, type_of_search):
 
 # recursive function to extract path from game state and its parents
 # becomes obsolete if path is too large so we will use an iterative approach instead
-def get_path_to_goal(game_state):
-    path = []
-    path = _get_path(game_state, path)
-    path.reverse()
-    return path
-
-
-def _get_path(game_state, path):
-    try:
-        if game_state.move is not None:
-            path.append(game_state.move)
-            _get_path(game_state.parent, path)
-    except RecursionError:
-        print("Path is too large to display fully!")
-
-    return path
+# def get_path_to_goal(game_state):
+#     path = []
+#     path = _get_path(game_state, path)
+#     path.reverse()
+#     return path
+#
+#
+# def _get_path(game_state, path):
+#     try:
+#         if game_state.move is not None:
+#             path.append(game_state.move)
+#             _get_path(game_state.parent, path)
+#     except RecursionError:
+#         print("Path is too large to display fully!")
+#
+#     return path
 
 
 # saves iteratively the path into a list in order to display path in correct (non reversed) order
