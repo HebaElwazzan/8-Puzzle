@@ -217,6 +217,13 @@ solveButton = pygame_gui.elements.UIButton(
     relative_rect=solveButtonRect.Rect, text="Solve", manager=manager
 )
 
+# slider to control speed of animation
+speedSliderRect = ButtonRect(4)
+speedSlider = pygame_gui.elements.UIHorizontalSlider(
+    relative_rect=speedSliderRect.Rect, start_value=1, value_range=(1,100),
+    manager=manager
+)
+
 # Option box to select which searching algorithm to visualize
 solveChoiceRect = ButtonRect(2)
 solveChoice = pygame_gui.elements.UIDropDownMenu(
@@ -265,7 +272,7 @@ while running:
     # things like restarting board, solving a problem, and so on.
 
     # when a solution exists, start updating the board
-    if time_counter > 100 and solutionExists:
+    if time_counter > 500 / speedSlider.get_current_value() and solutionExists:
         updateBoard(solutionStepsList[solutionIndex].move)
         time_counter = 0
         solutionIndex += 1
@@ -302,6 +309,7 @@ while running:
                     state = validate(inputTextField.text)
                     if state:
                         initialState, numbered_tiles_list, blankTile = newRandomState(state)
+                        solutionExists = False
                     else:
                         pass
 
