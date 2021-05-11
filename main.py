@@ -213,12 +213,13 @@ def print_data(answer, type_of_search):
         status = "Cost of path: " + str(answer.depth) + "   Nodes expanded: " + str(
             nodesExpanded) + "   Search depth: " + str(maxDepth) + "   Running time: " + str(runTime)
 
-        path_to_goal = iterative_get_path_(answer)
-        for game_state in path_to_goal:
-            if game_state:
-                if game_state.move:
-                    print(game_state.move)
-                print(game_state)
+        ## We don't need to print the path in console anymore
+        # path_to_goal = iterative_get_path_(answer)
+        # for game_state in path_to_goal:
+        #     if game_state:
+        #         if game_state.move:
+        #             print(game_state.move)
+        #         print(game_state)
     else:
         print("No solution exists!")
         print(f"Running time: {runTime}")
