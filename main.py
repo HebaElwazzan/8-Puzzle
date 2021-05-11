@@ -321,11 +321,18 @@ def __aStar__(root, type="manhattan"):
 
 def solve(gameState, algorithm):
 
-    answer = []
+    answer = None
     if algorithm == 'BFS':
         answer = __bfs__(gameState)
+    elif algorithm == 'DFS':
+        answer = __dfs__(gameState)
+    elif algorithm == 'A* Manhattan':
+        answer = __aStar__(gameState)
+    elif algorithm == 'A* Euclid':
+        answer = __aStar__(gameState, 'Euclid')
 
-    path_to_goal = _iterative_get_path_(answer)
+    if answer is not None:
+        path_to_goal = _iterative_get_path_(answer)
 
     if isFound:
         return path_to_goal
