@@ -304,7 +304,10 @@ while running:
                     solutionExists = False
                 elif event.ui_element == solveButton:
                     # inputTextField.text = ""
-                    path_to_goal = m.solve(initialState, solveChoice.selected_option)
+                    type_of_search = solveChoice.selected_option
+                    answer = m.solve(initialState, type_of_search)
+                    path_to_goal = m.iterative_get_path_(answer)
+                    status = m.print_data(answer, type_of_search)
                     if path_to_goal:
                         solutionExists = True
                         solutionIndex = 0
@@ -313,16 +316,16 @@ while running:
                         pass
                         # inputTextField.text = "No solution!"
 
-                    typeofsearch = solveChoice.selected_option
-                    status = m.display_results(initialState, typeofsearch)
-
-
-                    LabelFont = BUTTON_FONT
-                    label = LabelFont.render(status, True, GREEN)
-                    label.get_rect(center=(300, 300))
-                    window.blit(label, (10, 610))
-                    pygame.display.update()
-                    pygame.time.wait(1000)
+                    # typeofsearch = solveChoice.selected_option
+                    # status = m.display_results(initialState, typeofsearch)
+                    #
+                    #
+                    # # LabelFont = BUTTON_FONT
+                    # # label = LabelFont.render(status, True, GREEN)
+                    # # label.get_rect(center=(300, 300))
+                    # # window.blit(label, (10, 610))
+                    # # pygame.display.update()
+                    # # pygame.time.wait(1000)
 
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)

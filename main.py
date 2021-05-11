@@ -202,21 +202,6 @@ def __bfs__(root):
     return
 
 
-def display_results(initialstate, typeofsearch):
-    answer = None
-    if typeofsearch == "BFS":
-        answer = __bfs__(initialstate)
-    elif typeofsearch == "DFS":
-        answer = __dfs__(initialstate)
-    elif typeofsearch == "A* Manhattan":
-        answer = __aStar__(initialstate, "manhattan")
-    elif typeofsearch == "A* Euclid":
-        answer = __aStar__(initialstate, "euclid")
-    status = print_data(answer, typeofsearch)
-    return status
-
-
-
 def print_data(answer, type_of_search):
     print(type_of_search + ":")
     if answer is not None:  # condition for unreachable goal state
@@ -226,9 +211,10 @@ def print_data(answer, type_of_search):
         print(f"Search depth: {maxDepth}")
         print(f"Running time: {runTime}")
 
-        status = "Cost of path: " + str(answer.depth) + "\nNodes expanded: " + str(nodesExpanded) + "\nSearch depth: " + str(maxDepth) + "\nRunning time: " + str(runTime)
+        status = "Cost of path: " + str(answer.depth) + "\nNodes expanded: " + str(
+            nodesExpanded) + "\nSearch depth: " + str(maxDepth) + "\nRunning time: " + str(runTime)
 
-        path_to_goal = _iterative_get_path_(answer)
+        path_to_goal = iterative_get_path_(answer)
         for game_state in path_to_goal:
             if game_state:
                 if game_state.move:
@@ -265,14 +251,16 @@ def _get_path(game_state, path):
 
 
 # saves iteratively the path into a list in order to display path in correct (non reversed) order
-def _iterative_get_path_(game_state):
-    path = [game_state]
-    i = 0
-    while path[i].parent:
-        path.append(path[i].parent)
-        i += 1
-    path.reverse()
-    return path
+def iterative_get_path_(game_state):
+    if game_state is not None:
+        path = [game_state]
+        i = 0
+        while path[i].parent:
+            path.append(path[i].parent)
+            i += 1
+        path.reverse()
+        return path
+    return False
 
 
 # This functions creates a random game state by shuffling a list of 9 numbers: 0-8
@@ -317,7 +305,7 @@ def __aStar__(root, type="manhattan"):
                 maxDepth = maxDepth if maxDepth > child.depth else child.depth
 
             if ((child not in explored) and (child.state in expanded)) and expanded.get(
-                    child.state) > child.cost:   # child is in frontier and has a cost more than current child
+                    child.state) > child.cost:  # child is in frontier and has a cost more than current child
                 frontier.put(child)
                 expanded[child.state] = child.cost
     isFound = False
@@ -327,7 +315,6 @@ def __aStar__(root, type="manhattan"):
 
 
 def solve(gameState, algorithm):
-
     answer = None
     if algorithm == 'BFS':
         answer = __bfs__(gameState)
@@ -338,11 +325,7 @@ def solve(gameState, algorithm):
     elif algorithm == 'A* Euclid':
         answer = __aStar__(gameState, 'Euclid')
 
-    if answer is not None:
-        path_to_goal = _iterative_get_path_(answer)
-
     if isFound:
-        return path_to_goal
+        return answer
     else:
-        return False
-
+        return None
