@@ -237,25 +237,40 @@ confirmButtonRect = pygame.Rect(
 confirmButton = pygame_gui.elements.UIButton(
     relative_rect=confirmButtonRect, text="Confirm", manager=manager)
 
-
-initialState, numbered_tiles_list, blankTile = newRandomState(12345678)
+initialState, numbered_tiles_list, blankTile = newRandomState(308127654)
 
 # m.display_results(m.GameState(None, None, 102345678, 0))
 # m.display_results(initialState)
 
+# becomes true when 'solve' button is pressed and a solution returns
+solutionExists = False
+
+# will be populated when a solution is returned
+solutionStepsList = []
+solutionIndex = 0
 
 clock = pygame.time.Clock()
+
+time_counter = 0
 running = True
 while running:
 
-    # fixing the frame rate to 60 fps
-    time_delta = clock.tick(60) / 1000.0
+    time_delta = clock.tick(60) / 1000
+    time_counter += time_delta * 1000
 
     # a game loop consists of 2 main phases: update phase, and draw phase
     # in update phase we perform all modifications, then in draw phase we
     # show the effect of those modifications.
     # Hence, responding to events happens in update phase, in which we will do
     # things like restarting board, solving a problem, and so on.
+
+    # when a solution exists, start updating the board
+    if time_counter > 100 and solutionExists:
+        updateBoard(solutionStepsList[solutionIndex].move)
+        time_counter = 0
+        solutionIndex += 1
+        if solutionIndex == len(solutionStepsList):
+            solutionExists = False
 
     # check the event queue for events, such as quit or click
     # I noticed while learning pygame that if the program doesn't process the event queue,
@@ -272,12 +287,17 @@ while running:
                     state = m.random_game_state()
                     initialState, numbered_tiles_list, blankTile = newRandomState(state)
                 elif event.ui_element == solveButton:
-                    typeofsearch = solveChoice.selected_option
-                    m.display_results(initialState, typeofsearch)
+                    path_to_goal = m.solve(initialState, 'BFS')
+                    if path_to_goal:
+                        solutionExists = True
+                        solutionIndex = 0
+                        solutionStepsList = path_to_goal[1:]
+
                 elif event.ui_element == confirmButton:
                     state = validate(inputTextField.text)
                     if state:
                         initialState, numbered_tiles_list, blankTile = newRandomState(state)
+                        inputTextField.text = ""
                     else:
                         inputTextField.text = "Invalid Input"
 
