@@ -308,6 +308,7 @@ while running:
                 if event.ui_element == randomStateButton:
                     state = m.random_game_state()
                     initialState, numbered_tiles_list, blankTile = newState(state)
+                    solveButton.enable()
                     solutionExists = False
                 elif event.ui_element == solveButton:
                     if initialState.state != m.goalState:
@@ -315,6 +316,7 @@ while running:
                         answer = m.solve(initialState, type_of_search)
                         path_to_goal = m.iterative_get_path_(answer)
                         status = m.print_data(answer, type_of_search)
+                        solveButton.disable()
                         if path_to_goal:
                             solutionExists = True
                             solutionIndex = 0
@@ -333,6 +335,7 @@ while running:
                     if state:
                         initialState, numbered_tiles_list, blankTile = newState(state)
                         solutionExists = False
+                        solveButton.enable()
                     else:
                         pass
 

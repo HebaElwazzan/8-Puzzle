@@ -224,8 +224,10 @@ def print_data(answer, type_of_search):
         print("No solution exists!")
         print(f"Running time: {runTime}")
         print(f"Nodes expanded: {nodesExpanded}")
+        print(f"Maximum depth: {maxDepth}")
 
-        status = "No solution exists!   Running time: " + str(runTime) + "   Nodes expanded: " + str(nodesExpanded)
+        status = "No solution exists!   Running time: " + str(runTime) + \
+                 "   Nodes expanded: " + str(nodesExpanded) + "  Maximum depth: " + str(maxDepth)
 
     return status
 
@@ -285,7 +287,7 @@ def __aStar__(root, type="manhattan"):
     cost = h if type == "manhattan" else e
     root.cost = cost
     expanded[root.state] = cost
-    while frontier and explored.__len__() != 181440:
+    while frontier and explored.__len__() != 181441:
         node = frontier.get()
         explored.add(node)
         if node.state == goalState:
