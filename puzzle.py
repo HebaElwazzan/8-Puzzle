@@ -220,6 +220,7 @@ solveButtonRect = ButtonRect(3)
 solveButton = pygame_gui.elements.UIButton(
     relative_rect=solveButtonRect.Rect, text="Solve", manager=manager
 )
+solveButton.disable()
 
 # slider to control speed of animation
 speedSliderRect = ButtonRect(4)
@@ -302,12 +303,14 @@ while running:
                 if event.ui_element == randomStateButton:
                     state = m.random_game_state()
                     initialState, numbered_tiles_list, blankTile = newState(state)
+                    solveButton.enable()
                     solutionExists = False
                 elif event.ui_element == solveButton:
                     type_of_search = solveChoice.selected_option
                     answer = m.solve(initialState, type_of_search)
                     path_to_goal = m.iterative_get_path_(answer)
                     status = m.print_data(answer, type_of_search)
+                    solveButton.disable()
                     if path_to_goal:
                         solutionExists = True
                         solutionIndex = 0
@@ -323,6 +326,7 @@ while running:
                     if state:
                         initialState, numbered_tiles_list, blankTile = newState(state)
                         solutionExists = False
+                        solveButton.enable()
                     else:
                         pass
 
