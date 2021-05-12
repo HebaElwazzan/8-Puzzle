@@ -324,6 +324,7 @@ while running:
                             alert_label("Solving...")
                         else:
                             alert_label("No solution!")
+                            solveButton.enable()
 
                         # print status in text field
                         statusTextField.text = status
