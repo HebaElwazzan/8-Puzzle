@@ -34,6 +34,8 @@ BASICFONTSIZE = 60
 
 APPLICATION_TITLE = "8-Puzzle"
 
+ALERTLABELEVENT = pygame.USEREVENT + 2
+
 # must initialize pygame as program start
 # this is just something to be don
 pygame.init()
@@ -82,12 +84,8 @@ class ButtonRect:
 
 
 def alert_label(message):
-    label_font = BUTTON_FONT
-    label = label_font.render(message, True, GREEN)
-    label.get_rect(center=(CENTER_X, CENTER_Y))
-    window.blit(label, (LABEL_WIDTH, LABEL_HEIGHT))
-    pygame.display.update()
-    pygame.time.wait(WAIT_TIME)
+    alertLabel.set_text(message)
+    pygame.time.set_timer(ALERTLABELEVENT, WAIT_TIME)
 
 
 # Validate input state from the user
@@ -228,6 +226,11 @@ speedSlider = pygame_gui.elements.UIHorizontalSlider(
     manager=manager
 )
 
+alertLabelRect = ButtonRect(5)
+alertLabel = pygame_gui.elements.UILabel(
+    relative_rect=alertLabelRect.Rect, manager=manager, text="Click Solve to solve!"
+)
+
 # Option box to select which searching algorithm to visualize
 solveChoiceRect = ButtonRect(2)
 solveChoice = pygame_gui.elements.UIDropDownMenu(
@@ -340,6 +343,10 @@ while running:
                         solveButton.enable()
                     else:
                         pass
+
+        if event.type == ALERTLABELEVENT:
+            alertLabel.set_text("")
+            pygame.time.set_timer(ALERTLABELEVENT, 0)
 
         # Checking for a mouseclick on a tile
         if event.type == pygame.MOUSEBUTTONDOWN:
