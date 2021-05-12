@@ -328,6 +328,7 @@ while running:
 
                         # print status in text field
                         statusTextField.text = status
+                        statusTextField.focus()
                     else:
                         alert_label("Already solved")
 
