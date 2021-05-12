@@ -287,7 +287,7 @@ def __aStar__(root, type="manhattan"):
     cost = h if type == "manhattan" else e
     root.cost = cost
     expanded[root.state] = cost
-    while frontier and explored.__len__() != 181441:
+    while not frontier.empty() and explored.__len__() != 181441:
         node = frontier.get()
         explored.add(node)
         if node.state == goalState:
