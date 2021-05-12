@@ -4,6 +4,13 @@ import pygame_gui
 # local imports
 import main as m
 
+"""
+Karim Elsayed ID.6023
+Ahmed Saad ID.6060
+Heba Elwazzan ID.6521
+Youssef Nawar ID.6602
+"""
+
 # width and height are not final and are subject to change as UI changes
 WINDOW_WIDTH = 900
 WINDOW_HEIGHT = 750

@@ -1,0 +1,16 @@
+CC482: Artificial Intelligence
+Prof. Dr. Marwan Torki
+TA Eng. Mohamed El-Habebe
+Assignment #1
+8-Puzzle
+Team:
+Karim Elsayed ID.6023
+Ahmed Saad ID.6060
+Heba Elwazzan ID.6521
+Youssef Nawar ID.6602
+
+8-puzzle game is a sliding puzzle that consists of a frame of numbered square tiles in random order with one tile
+missing. The purpose of the game is to find a way to order the tiles in numerical order.
+
+This program solves the 8-puzzle game using 3 algorithms: breadth-first search, depth-first search, and A* search, using
+two heuristics, Manhattan, and Euclid. It then displays the search result, if it exists, using a gui 3x3 board.
